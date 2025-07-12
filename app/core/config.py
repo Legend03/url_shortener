@@ -1,12 +1,19 @@
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = os.getenv('DATABASE_URL')
-    SECRET_KEY: str = os.getenv('SECRET_KEY')
-    DEBUG: bool = os.getenv('DEBUG')
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str
+    DATABASE_HOST: str
+    DATABASE_PORT: int
+    DATABASE_NAME: str
+    SECRET_KEY: str
+    DEBUG: bool
+
+    class Config:
+        env_file = ".env"
 
 settings = Settings()
+
+def get_db_url():
+    return (f"postgresql+asyncpg://{settings.DATABASE_USER}:{settings.DATABASE_PASSWORD}@"
+            f"{settings.DATABASE_HOST}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}")
