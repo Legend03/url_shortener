@@ -1,8 +1,8 @@
-"""Initial revision
+"""Initial commit
 
-Revision ID: bcb1ca37d603
+Revision ID: e8f1f26ab9b1
 Revises: 
-Create Date: 2025-07-12 10:34:33.170446
+Create Date: 2025-07-20 13:38:31.483393
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bcb1ca37d603'
+revision: str = 'e8f1f26ab9b1'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,13 +33,14 @@ def upgrade() -> None:
     op.create_table('links',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('original_url', sa.String(), nullable=False),
-    sa.Column('short_url', sa.String(), nullable=False),
+    sa.Column('short_code', sa.String(), nullable=False),
     sa.Column('clicks_count', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('short_code')
     )
     op.create_table('clicks',
     sa.Column('id', sa.Integer(), nullable=False),

@@ -1,3 +1,4 @@
+from fastapi.openapi.models import Link
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.testing.schema import mapped_column
@@ -11,4 +12,4 @@ class Click(Base):
     device_type: Mapped[str_nullable_false]
     link_id: Mapped[int] = mapped_column(ForeignKey('links.id'), nullable=False)
 
-    link = relationship('Link', back_populates='clicks')
+    link: Mapped['Link'] = relationship(back_populates='clicks')

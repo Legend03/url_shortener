@@ -1,15 +1,16 @@
 services:
   app:
+    container_name: app
     build:
       context: ./app
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+      DATABASE_URL: postgresql+asyncpg://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      - ./app:/app
+      - .:/app
     ports:
       - "8000:8000"
     restart: always
@@ -37,6 +38,7 @@ services:
     restart: always
 
   pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: pundalov03@gmail.com
