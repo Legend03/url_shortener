@@ -1,8 +1,6 @@
 import sys
 import os
 
-from fastapi.middleware.cors import CORSMiddleware
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import uvicorn

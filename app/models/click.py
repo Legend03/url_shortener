@@ -1,9 +1,6 @@
-from fastapi.openapi.models import Link
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy.testing.schema import mapped_column
-
-from ..core.database import Base, int_pk, str_uniq, str_nullable_false
+from sqlalchemy.orm import Mapped, relationship, mapped_column
+from app.core.database import Base, int_pk, str_nullable_false
 
 class Click(Base):
     id: Mapped[int_pk]

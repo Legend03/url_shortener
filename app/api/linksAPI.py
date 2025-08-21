@@ -1,9 +1,8 @@
 from urllib.parse import urlparse
 
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlalchemy import select
-from starlette.responses import RedirectResponse
 
 from app.core.database import async_session_maker
 from app.models.link import Link
@@ -27,6 +26,11 @@ async def get_link_by_id(link_id: int,
 async def create_link(link_data: SLinkCreate = Depends(),
                       current_user: SUser = Depends(UserRepository.get_current_user)) -> dict:
     return await LinkRepository.create_link(link_data, user_id=current_user.id)
+
+@router.post("/delete", summary="Delete link")
+async def delete_link(link_id: int,
+                      current_user: SUser = Depends(UserRepository.get_current_user)) -> dict:
+    return await LinkRepository.delete_link(link_id, user_id=current_user.id)
 
 @router.get('/r/{short_code}', summary='Redirect by short link')
 async def redirect_short_link(short_code: str,

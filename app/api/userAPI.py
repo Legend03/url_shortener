@@ -6,7 +6,7 @@ from fastapi.params import Depends
 from app.repositories.userRepository import UserRepository
 from app.schemes.userSchemes import SCreateUser, SLoginUser
 
-router = APIRouter(prefix='/user', tags=["Work with user"])
+router = APIRouter(prefix='/users', tags=["Work with user"])
 
 def set_cookie(response: Response, to_encode_data: str):
     response.set_cookie(

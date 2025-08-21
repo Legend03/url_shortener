@@ -1,11 +1,7 @@
 from typing import List
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, relationship, mapped_column
-
-from .click import Click
-from .user import User
-from ..core.database import Base, int_pk, str_uniq, str_nullable_false
+from app.core.database import Base, int_pk, str_uniq, str_nullable_false
 
 class Link(Base):
     id: Mapped[int_pk]

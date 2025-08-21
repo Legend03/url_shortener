@@ -2,7 +2,7 @@ import secrets
 import string
 from typing import List
 
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlalchemy import select, delete
 
 from app.core.database import async_session_maker
@@ -17,7 +17,7 @@ class LinkRepository:
         return ''.join(secrets.choice(chars) for _ in range(length))
 
     @classmethod
-    async def create_link(cls, link_data: SLinkCreate, user_id: int = Depends()) -> dict:
+    async def create_link(cls, link_data: SLinkCreate, user_id: int) -> dict:
         short_code = cls.generate_short_code()
 
         new_link = Link(
@@ -43,7 +43,7 @@ class LinkRepository:
             return links
 
     @classmethod
-    async def get_link_by_id(cls, link_id: int, user_id: int = Depends()) -> SLink:
+    async def get_link_by_id(cls, link_id: int, user_id: int) -> SLink:
         async with async_session_maker() as session:
             query = select(Link).where(Link.id == link_id, Link.user_id == user_id)
             result = await session.execute(query)
@@ -53,9 +53,9 @@ class LinkRepository:
             return SLink.model_validate(link)
 
     @classmethod
-    async def delete_link(cls, link_id):
+    async def delete_link(cls, link_id, user_id: int):
         async with async_session_maker() as session:
-            await cls.get_link_by_id(link_id)
+            await cls.get_link_by_id(link_id, user_id)
 
             query = delete(Link).where(Link.id == link_id)
             await session.execute(query)
@@ -63,8 +63,8 @@ class LinkRepository:
             return { 'message': 'Link deleted Successfully' }
 
     @classmethod
-    async def link_exists(cls, link_id):
-        link = await cls.get_link_by_id(link_id)
+    async def link_exists(cls, link_id, user_id: int):
+        link = await cls.get_link_by_id(link_id, user_id)
 
         if link is None:
             raise HTTPException(status_code=404, detail="Link not found")
