@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 from fastapi import HTTPException, Depends, Request
-from jwt import PyJWTError
 from sqlalchemy import select
 from passlib.context import CryptContext
 from starlette import status
@@ -51,7 +50,7 @@ class UserRepository:
                 algorithms=[auth_data['algorithm']]
             )
             return payload
-        except PyJWTError as e:
+        except:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail='Invalid token'
