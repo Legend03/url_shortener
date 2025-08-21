@@ -4,8 +4,8 @@ from .userAPI import router as usersRouter
 
 router = APIRouter()
 
-router.include_router(linksRouter, prefix='/links', tags=['links'])
-router.include_router(usersRouter, prefix='/users', tags=['users'])
+router.include_router(linksRouter)
+router.include_router(usersRouter)
 
 __all__ = [
     'router',

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - URL Shortener{% endblock %}
+
+{% block head %}
+    <script src="/static/js/index.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="hero">
+        <h1>Сокращайте ссылки моментально</h1>
+        <p>Простой и мощный сервис для сокращения URL с аналитикой и безопасностью</p>
+
+        <div class="cta-buttons">
+            <a href="/users/register" class="btn btn-primary">
+                <i class="fas fa-rocket"></i> Начать использовать
+            </a>
+            <a href="/docs" class="btn btn-secondary">
+                <i class="fas fa-code"></i> API Документация
+            </a>
+        </div>
+    </section>
+</div>
+
+<section class="features">
+    <div class="container">
+        <div class="feature">
+            <i class="fas fa-bolt"></i>
+            <h3>Мгновенное сокращение</h3>
+            <p>Преобразуйте длинные ссылки в короткие всего за несколько секунд</p>
+        </div>
+
+        <div class="feature">
+            <i class="fas fa-chart-line"></i>
+            <h3>Детальная аналитика</h3>
+            <p>Отслеживайте количество кликов, географию и устройства пользователей</p>
+        </div>
+
+        <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Безопасность</h3>
+            <p>JWT аутентификация и защита ваших данных</p>
+        </div>
+
+        <div class="feature">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Адаптивный дизайн</h3>
+            <p>Работает на всех устройствах - от смартфонов до десктопов</p>
+        </div>
+
+        <div class="feature">
+            <i class="fas fa-database"></i>
+            <h3>Надежное хранение</h3>
+            <p>PostgreSQL обеспечивает надежное хранение ваших данных</p>
+        </div>
+
+        <div class="feature">
+            <i class="fas fa-code"></i>
+            <h3>REST API</h3>
+            <p>Полноценное API для интеграции с вашими приложениями</p>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <h2>Почему выбирают нас?</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div>Безопасность</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div>Доступность</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div>Бесплатно</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">🚀</div>
+                <div>Скорость</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -13,11 +13,11 @@ from app.schemes.userSchemes import SUser
 
 router = APIRouter(prefix="/links", tags=["Work with Links"])
 
-@router.get("", summary="Get links")
+@router.get("", summary="Get links for current user")
 async def get_links(current_user: SUser = Depends(UserRepository.get_current_user)) -> List[SLink]:
     return await LinkRepository.get_links(user_id=current_user.id)
 
-@router.get('/{link_id}', summary="Get link by id")
+@router.get('/{link_id}', summary="Get link by id for current user")
 async def get_link_by_id(link_id: int,
                          current_user: SUser = Depends(UserRepository.get_current_user)) -> SLink:
     return await LinkRepository.get_link_by_id(link_id, user_id=current_user.id)
