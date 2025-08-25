@@ -5,7 +5,6 @@
 }
 
 body {
-    background-color: red;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
@@ -65,7 +64,7 @@ header {
 
 .hero {
     text-align: center;
-    padding: 180px 20px 100px;
+    padding: 130px 20px 100px;
     color: white;
 }
 

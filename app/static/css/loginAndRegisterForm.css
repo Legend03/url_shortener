@@ -57,6 +57,7 @@ body {
 }
 
 main {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     flex: 1;
 }
 
@@ -94,24 +95,45 @@ footer {
 
 /* Стили для сообщений об ошибках */
 .error-message {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    display: none;
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border-left: 4px solid #c62828;
 }
 
-.form-group.error input {
-    border-color: #e74c3c;
+.error-message i {
+    margin-right: 8px;
 }
 
-.form-group.error .error-message {
-    display: block;
+ul.error-list{
+    list-style-type: none;
+}
+
+.error-list {
+    padding: 0;
+    margin: 0;
+}
+
+.error-list li {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.error-list li:last-child {
+    margin-bottom: 0;
+}
+
+.error-list i {
+    margin-right: 8px;
 }
 
 /* Адаптивность для форм */
 @media (max-width: 480px) {
     .auth-form {
-        margin: 50px 20px;
+        margin: 120px 20px;
         padding: 30px 20px;
     }
 
