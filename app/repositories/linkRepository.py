@@ -2,12 +2,15 @@ import secrets
 import string
 from typing import List
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends, Form
 from sqlalchemy import select, delete
+from starlette.responses import RedirectResponse
 
 from app.core.database import async_session_maker
 from app.models.link import Link
-from app.schemes.linkSchemes import SLinkCreate, SLink
+from app.repositories.userRepository import UserRepository
+from app.schemes import SUser
+from app.schemes.linkSchemes import SLink
 
 
 class LinkRepository:
@@ -17,11 +20,11 @@ class LinkRepository:
         return ''.join(secrets.choice(chars) for _ in range(length))
 
     @classmethod
-    async def create_link(cls, link_data: SLinkCreate, user_id: int) -> dict:
+    async def create_link(cls, original_link: str, user_id: int) -> RedirectResponse:
         short_code = cls.generate_short_code()
 
         new_link = Link(
-            original_url=link_data.original_url,
+            original_url=original_link,
             short_code=short_code,
             user_id=user_id,
         )
@@ -30,10 +33,10 @@ class LinkRepository:
             session.add(new_link)
             await session.commit()
             await session.refresh(new_link)
-            return { 'message': 'Link successfully created!' }
+            return RedirectResponse(url="/dashboard", status_code=303)
 
     @classmethod
-    async def get_links(cls, user_id: int) -> List[SLink]:
+    async def get_links_by_user_id(cls, user_id: int) -> List[SLink]:
         async with async_session_maker() as session:
             query = select(Link).where(Link.user_id == user_id)
             result = await session.execute(query)
@@ -53,14 +56,15 @@ class LinkRepository:
             return SLink.model_validate(link)
 
     @classmethod
-    async def delete_link(cls, link_id, user_id: int):
+    async def delete_link(cls, link_id: int, current_user: SUser):
         async with async_session_maker() as session:
-            await cls.get_link_by_id(link_id, user_id)
+            await cls.get_link_by_id(link_id, current_user.id)
 
             query = delete(Link).where(Link.id == link_id)
             await session.execute(query)
             await session.commit()
-            return { 'message': 'Link deleted Successfully' }
+
+            return RedirectResponse(url="/dashboard", status_code=303)
 
     @classmethod
     async def link_exists(cls, link_id, user_id: int):

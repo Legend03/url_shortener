@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import jwt
-from fastapi import HTTPException, Depends, Request
+from fastapi import HTTPException, Request
 from sqlalchemy import select
 from passlib.context import CryptContext
 from starlette import status
@@ -64,7 +64,7 @@ class UserRepository:
         return token
 
     @classmethod
-    async def get_current_user(cls, token: str = Depends(get_access_token_from_cookie)) -> SUser:
+    async def get_current_user_by_token(cls, token: str) -> SUser:
         payload = cls.decode_access_token(token)
 
         expire = payload['exp']
@@ -76,14 +76,39 @@ class UserRepository:
         if not user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User not found')
 
-        user = SUser.model_validate({
-            'id': int(payload['sub']),
-            'email': payload['email'],
-        })
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+        async with async_session_maker() as session:
+            query = select(User).where(User.id == int(user_id))
+            result = await session.execute(query)
+            user_model = result.scalar_one_or_none()
 
-        return user
+            if not user_model:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+
+            return SUser.model_validate(user_model)
+
+    @staticmethod
+    async def get_current_user(request: Request) -> SUser | None:
+        try:
+            token = UserRepository.get_access_token_from_cookie(request)
+            current_user = await UserRepository.get_current_user_by_token(token)
+            if not current_user:
+                return None
+            return current_user
+        except HTTPException:
+            return None
+
+    @staticmethod
+    async def require_auth(request: Request) -> SUser:
+        try:
+            token = UserRepository.get_access_token_from_cookie(request)
+            current_user = await UserRepository.get_current_user_by_token(token)
+            if not current_user:
+                raise HTTPException(status_code=302, detail="Not authenticated")
+            return current_user
+        except HTTPException:
+            raise HTTPException(status_code=302, detail="Not authenticated")
+        except Exception:
+            raise HTTPException(status_code=302, detail="Not authenticated")
 
     @classmethod
     async def login_user(cls, user_data: SLoginUser) -> str:

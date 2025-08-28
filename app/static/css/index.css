@@ -62,6 +62,22 @@ header {
     color: #ffd700;
 }
 
+.nav-logout-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-logout-btn:hover {
+    color: #ffd700;
+}
+
 .hero {
     text-align: center;
     padding: 130px 20px 100px;

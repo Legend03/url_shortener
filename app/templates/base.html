@@ -17,8 +17,13 @@
             </a>
             <div class="nav-links">
                 <a href="/docs"><i class="fas fa-book"></i> Документация</a>
-                <a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a>
-                <a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a>
+                {% if user %}
+                    <a href="/dashboard"><i class="fas fa-user"></i>Личный кабинет</a>
+                    <a href="/users/logout" class="nav-logout-link"><i class="fas fa-sign-out-alt"></i>Выйти</a>
+                {% else %}
+                    <a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a>
+                    <a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a>
+                {% endif %}
             </div>
         </nav>
     </header>
@@ -28,7 +33,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 URL Shortener. Built with FastAPI & PostgreSQL</p>
+        <p>&copy; 2025 URL Shortener. Built with FastAPI & PostgreSQL</p>
     </footer>
 </body>
 </html>

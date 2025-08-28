@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title  %}
+Личный кабинет - URL Shortener
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Добро пожаловать, {{ user.email }}!</h1>
+        <p>Ваш личный кабинет</p>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <i class="fas fa-link"></i>
+                <h3>Всего ссылок</h3>
+                <span class="stat-number">{{ total_links }}</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-mouse"></i>
+                <h3>Всего кликов</h3>
+                <span class="stat-number">{{ total_clicks }}</span>
+            </div>
+        </div>
+
+        <div class="create-link-form">
+            <h2>Создать новую ссылку</h2>
+            <form action="/dashboard/create-link" method="post" class="link-form">
+                <div class="form-input-group">
+                    <input
+                        type="url"
+                        name="original_url"
+                        placeholder="Введите длинную ссылку"
+                        required
+                        class="url-input"
+                    >
+                    <button type="submit" class="btn btn-primary create-btn">
+                        <i class="fas fa-plus"></i> Создать
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="links-section">
+            <h2>Мои ссылки</h2>
+            <div class="links-table">
+                <div class="table-header">
+                    <div class="table-cell">Оригинальная ссылка</div>
+                    <div class="table-cell">Короткая ссылка</div>
+                    <div class="table-cell">Клики</div>
+                    <div class="table-cell">Действия</div>
+                </div>
+
+                {% if links %}
+                    {% for link in links %}
+                    <div class="table-row">
+                        <div class="table-cell" title="{{ link.original_url }}">
+                            <a href="{{ link.original_url }}" target="_blank" class="original-link">
+                                {{ link.original_url|truncate(40) }}
+                            </a>
+                        </div>
+                        <div class="table-cell">
+                            <a href="dashboard/r/{{ link.short_code }}" target="_blank" class="short-link">
+                                {{ link.short_code }}
+                            </a>
+                        </div>
+                        <div class="table-cell clicks-count">
+                            {{ link.clicks_count }}
+                        </div>
+                        <div class="table-cell actions-cell">
+                            <form action="/dashboard/delete-link" method="post" style="display: inline;">
+                                <input type="hidden" name="link_id" value="{{ link.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Удалить">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="table-row empty-row">
+                        <div class="table-cell" colspan="4">
+                            У вас пока нет созданных ссылок
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

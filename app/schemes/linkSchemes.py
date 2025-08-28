@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 class SLink(BaseModel):
+    id: int
     original_url: str
     short_code: str
     clicks_count: int

@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, Response, Form, Request
+from fastapi import APIRouter, Response, Form, Request
 from fastapi.templating import Jinja2Templates
-from pydantic import EmailStr, ValidationError as PydanticValidationError
+from starlette.responses import RedirectResponse
 from starlette.templating import _TemplateResponse
 
 from app.core.exceptions import PasswordValidationException, EmailValidationException
 from app.core.validators import PasswordValidator, EmailValidator
 from app.repositories.userRepository import UserRepository
-from app.schemes.userSchemes import SCreateUser, SLoginUser
+from app.schemes.userSchemes import SCreateUser, SLoginUser, SUser
 
 router = APIRouter(prefix='/users', tags=["Work with user"])
 templates = Jinja2Templates(directory="app/templates")
@@ -16,18 +16,19 @@ def set_cookie(response: Response, to_encode_data: str):
         key='access_token',
         value=to_encode_data,
         httponly=True,
-        secure=True,
+        secure=False,
         samesite='lax',
-        max_age=30 * 24 * 60 * 60
+        max_age=30 * 24 * 60 * 60,
+        path='/'
     )
 
-@router.post('/register', summary="Register new user")
+@router.post('/register', summary="Register new user", response_model=None)
 async def register_user(request: Request,
                         response: Response,
                         email: str = Form(...),
                         password: str = Form(...),
                         password_confirm: str = Form(...)
-                        ) -> _TemplateResponse:
+                        ) -> _TemplateResponse | RedirectResponse:
     errors = []
 
     if password != password_confirm:
@@ -50,11 +51,10 @@ async def register_user(request: Request,
     try:
         userData = SCreateUser(email=email, password=password)
         encodeJWT = await UserRepository.register_user(userData)
-        set_cookie(response, encodeJWT)
-        return templates.TemplateResponse('index.html', {
-            'request': request,
-            'message': 'User registered successfully!'
-        })
+
+        redirect_response = RedirectResponse(url="/dashboard", status_code=303)
+        set_cookie(redirect_response, encodeJWT)
+        return redirect_response
     except (PasswordValidationException, EmailValidationException, ValueError) as e:
         return templates.TemplateResponse("register.html", {
             "request": request,
@@ -62,28 +62,28 @@ async def register_user(request: Request,
             "email": email
         })
 
-@router.post('/login', summary="Login user")
+@router.post('/login', summary="Login user", response_model=None)
 async def login_user(request: Request,
                      response: Response,
                      email: str = Form(...),
                      password: str = Form(...),
-                    ) -> _TemplateResponse:
+                    ) -> _TemplateResponse | RedirectResponse:
     try:
         userData = SLoginUser(email=email, password=password)
-        encode_jwt = await UserRepository.login_user(userData)
-        set_cookie(response, encode_jwt)
-        return templates.TemplateResponse('index.html', {
-            'request': request,
-            'message': 'User logged successfully!'
-        })
-    except PydanticValidationError as e:
+        encodeJWT = await UserRepository.login_user(userData)
+
+        redirect_response = RedirectResponse(url="/dashboard", status_code=303)
+        set_cookie(redirect_response, encodeJWT)
+        return redirect_response
+    except (PasswordValidationException, EmailValidationException, ValueError) as e:
         return templates.TemplateResponse("login.html", {
             "request": request,
             "error": str(e),
             "email": email
         })
 
-@router.post('/logout', summary="Logout user")
-async def logout_user(response: Response) -> dict:
-    response.delete_cookie('access_token')
-    return { 'message': 'User logout successfully!' }
+@router.get('/logout', summary="Logout user")
+async def logout_user(response: Response) -> RedirectResponse:
+    redirect_response = RedirectResponse(url='/')
+    redirect_response.delete_cookie('access_token')
+    return redirect_response
